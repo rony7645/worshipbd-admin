@@ -98,7 +98,7 @@ const sampleData = [
   },
 ]
 
-export default function Home() {
+export default function SubmissionTable() {
   return (
     <>
     <DataTable data={sampleData} />
