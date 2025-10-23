@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import axios from "axios";
+import api from "@/hooks/useAxios";
 import {
   MoreHorizontal,
   PencilLine,
@@ -57,8 +57,8 @@ export const TeamMembersSchema = z
   })
   .superRefine(async (data, ctx) => {
     const [checkEmail, checkPhone] = await Promise.all([
-      axios.get(`http://localhost:5000/api/team-members/?email=${data.email}`),
-      axios.get(`http://localhost:5000/api/team-members/?phone=${data.phone}`),
+      api.get(`/api/team-members/?email=${data.email}`),
+      api.get(`/api/team-members/?phone=${data.phone}`),
     ]);
 
     const existingEmail = checkEmail.data[0];
@@ -226,7 +226,7 @@ export default function TeamMembersTable({ itemsPerPage = 5 }: DataTableProps) {
 
   // Get all Team Members
   const getTeamMembers = async () => {
-    const res = await axios.get("http://localhost:5000/api/team-members/");
+    const res = await api.get("/api/team-members/");
     dispatch({ type: "GET_ALL_TEAM_MEMBERS", payload: res.data });
   };
   useEffect(() => {
@@ -234,11 +234,11 @@ export default function TeamMembersTable({ itemsPerPage = 5 }: DataTableProps) {
       dispatch({ type: "SET_CURRENT_PAGE", payload: totalPages || 1 });
     }
   }, [currentPage, totalPages]);
-  
+
   useEffect(() => {
     getTeamMembers();
   }, []);
-
+  
   const handleSearchChange = (value: string) => {
     dispatch({ type: "SET_SEARCH_QUERY", payload: value });
   };

@@ -19,8 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import api from "@/hooks/useAxios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -63,22 +63,19 @@ export default function TeamMemberForm({
   const onSubmit = async (data: FormData) => {
     try {
       const formData = new FormData();
-      formData.append("name", data.title);
+      formData.append("title", data.title);
       formData.append("email", data.email);
       formData.append("phone", data.phone);
       formData.append("department", data.department);
       formData.append("status", data.status);
-      if(data.avatar && data.avatar[0]) {
-        formData.append("avatar",data.avatar[0] )
+      if (data.avatar && data.avatar[0]) {
+        formData.append("avatar", data.avatar[0]);
       }
       if (!state.selectedItem) {
-        await axios.post("http://localhost:5000/api/team-members/", formData);
+        await api.post("/api/team-members/", formData);
         toast.success("Team member added successfully");
       } else {
-        await axios.patch(
-          `http://localhost:5000/api/team-members/${data.slug}`,
-          formData
-        );
+        await api.patch(`/api/team-members/${data.slug}`, formData);
         toast.success("Team member updated successfully");
       }
 
@@ -96,7 +93,7 @@ export default function TeamMemberForm({
       return "focus-visible:ring-destructive/40 border-destructive";
     }
   };
-console.log(errors);
+  console.log(errors);
 
   useEffect(() => {
     if (state.selectedItem) {
@@ -248,11 +245,7 @@ console.log(errors);
             {/* Avatar */}
             <div className="space-y-2">
               <Label htmlFor="avatar">Team Member Image</Label>
-              <Input
-                id="avatar"
-                type="file"
-                {...register("avatar")}
-              />
+              <Input id="avatar" type="file" {...register("avatar")} />
             </div>
           </div>
 

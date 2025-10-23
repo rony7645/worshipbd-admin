@@ -11,14 +11,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import axios from "axios";
+import api from "@/hooks/useAxios";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface DeleteConfirmationProps {
   state: TableState;
   dispatch: React.Dispatch<TableAction>;
-  refetch: () => void
+  refetch: () => void;
 }
 export default function DeleteConfirmation({
   refetch,
@@ -27,13 +27,13 @@ export default function DeleteConfirmation({
 }: DeleteConfirmationProps) {
   const handleItemDelete = async (slug: string) => {
     try {
-      await axios.delete(`http://localhost:5000/api/team-members/${slug}`);
+      await api.delete(`/api/team-members/${slug}`);
       dispatch({ type: "CLOSE_DELETE_DIALOG" });
       toast.success("Deleted has been success");
       await refetch();
     } catch (error) {
-        dispatch({ type: "CLOSE_DELETE_DIALOG" });
-        toast.error('Something went wrong')
+      dispatch({ type: "CLOSE_DELETE_DIALOG" });
+      toast.error("Something went wrong");
     }
   };
 
@@ -44,8 +44,8 @@ export default function DeleteConfirmation({
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             Are you absolutely sure you want to delete{" "}
-            <strong>{state.selectedItem?.title}</strong> ? Once deleted, it cannot
-            be recovered or undone permanently
+            <strong>{state.selectedItem?.title}</strong> ? Once deleted, it
+            cannot be recovered or undone permanently
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -58,7 +58,7 @@ export default function DeleteConfirmation({
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              if(state.selectedItem?.slug) {
+              if (state.selectedItem?.slug) {
                 handleItemDelete(state.selectedItem.slug);
               }
             }}
