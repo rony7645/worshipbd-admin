@@ -1,5 +1,5 @@
 "use client";
-import axios from "axios";
+import api from "@/hooks/useAxios";
 import {
   createContext,
   ReactNode,
@@ -136,7 +136,7 @@ export const CaseStudiesProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(tableReducer, initialState);
 
   const getTableItems = async () => {
-    const res = await axios.get("http://localhost:5000/api/case-studies");
+    const res = await api.get("/api/case-studies");
     dispatch({ type: "GET_ALL_TABLE_ITEMS", payload: res.data });
   };
 

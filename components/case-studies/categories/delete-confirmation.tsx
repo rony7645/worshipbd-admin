@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import axios from "axios";
+import api from "@/hooks/useAxios";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { TableAction, TableState } from "./caseStudies-categories-table";
@@ -27,7 +27,7 @@ export default function CaseStudiesCategoryDeleteConfirmation({
 }: DeleteConfirmationProps) {
   const handleItemDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:5000/api/case-studies/categories/${id}`);
+      await api.delete(`/api/case-studies/categories/${id}`);
       dispatch({ type: "CLOSE_DELETE" });
       toast.success("Deleted has been success");
       await refetch();

@@ -2,10 +2,9 @@ import axios from "axios";
 
 // Axios instance
 const api = axios.create({
-  baseURL: "http://localhost:5001",
+  baseURL: "http://localhost:5000",
   timeout: 5000,
   headers: {
-    "Content-Type": "application/json",
     "Authorization": "Bearer YOUR_TOKEN"
   }
 });

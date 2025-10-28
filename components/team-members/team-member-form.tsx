@@ -45,6 +45,7 @@ export default function TeamMemberForm({
     handleSubmit,
     reset,
     control,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(TeamMembersSchema),
@@ -58,7 +59,6 @@ export default function TeamMemberForm({
       createdAt: "",
     },
   });
-  console.log(errors);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -93,7 +93,6 @@ export default function TeamMemberForm({
       return "focus-visible:ring-destructive/40 border-destructive";
     }
   };
-  console.log(errors);
 
   useEffect(() => {
     if (state.selectedItem) {
@@ -245,7 +244,21 @@ export default function TeamMemberForm({
             {/* Avatar */}
             <div className="space-y-2">
               <Label htmlFor="avatar">Team Member Image</Label>
-              <Input id="avatar" type="file" {...register("avatar")} />
+              <Controller
+                name="avatar"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    type="file"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        field.onChange([file]); // RHF state update
+                      }
+                    }}
+                  />
+                )}
+              />
             </div>
           </div>
 

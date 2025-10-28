@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useCaseStudies } from "@/context/CaseStudiesContext";
-import axios from "axios";
+import api from "@/hooks/useAxios";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -19,7 +19,7 @@ export default function CaseStudyDeleteConfirmation() {
   const { state, dispatch, getTableItems: refetch } = useCaseStudies();
   const handleItemDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:5000/api/case-studies/${id}`);
+      await api.delete(`/api/case-studies/${id}`);
       dispatch({ type: "CLOSE_DELETE_DIALOG" });
       toast.success("Deleted has been success");
       await refetch();

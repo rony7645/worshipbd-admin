@@ -1,9 +1,12 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { useCaseStudies, ZodCaseStudySchema } from "@/context/CaseStudiesContext";
+import {
+  useCaseStudies,
+  ZodCaseStudySchema,
+} from "@/context/CaseStudiesContext";
+import api from "@/hooks/useAxios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { Upload, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -13,7 +16,13 @@ import z from "zod";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
 type CaseStudyData = z.infer<typeof ZodCaseStudySchema>;
@@ -50,7 +59,7 @@ export default function CaseStudyForm() {
   // Fetch categories
   const formCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/case-studies/categories");
+      const res = await api.get("/api/case-studies/categories");
       setCategories(res.data);
     } catch (error) {
       console.log(error);
@@ -94,7 +103,9 @@ export default function CaseStudyForm() {
       formData.append("description", data.description);
       formData.append("status", data.status);
 
-      data.categories.forEach((cat) => formData.append("categories[]", cat._id));
+      data.categories.forEach((cat) =>
+        formData.append("categories[]", cat._id)
+      );
 
       if (data.featuredImg) {
         formData.append("featuredImg", data.featuredImg);
@@ -102,13 +113,13 @@ export default function CaseStudyForm() {
 
       if (data._id) {
         // Update
-        await axios.patch(`http://localhost:5000/api/case-studies/${data._id}`, formData, {
+        await api.patch(`/api/case-studies/${data._id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         toast.success("Case Study updated successfully!");
       } else {
         // Create
-        await axios.post("http://localhost:5000/api/case-studies/", formData, {
+        await api.post("/api/case-studies/", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         toast.success("Case Study created successfully!");
@@ -142,16 +153,24 @@ export default function CaseStudyForm() {
                   <Label htmlFor="title">Title</Label>
                   <Input id="title" type="text" {...register("title")} />
                   {errors.title && (
-                    <p className="text-sm text-red-500">{errors.title.message}</p>
+                    <p className="text-sm text-red-500">
+                      {errors.title.message}
+                    </p>
                   )}
                 </div>
 
                 {/* Description */}
                 <div className="grid gap-3">
                   <Label htmlFor="content">Description</Label>
-                  <Textarea id="content" className="h-60" {...register("description")} />
+                  <Textarea
+                    id="content"
+                    className="h-60"
+                    {...register("description")}
+                  />
                   {errors.description && (
-                    <p className="text-sm text-red-500">{errors.description.message}</p>
+                    <p className="text-sm text-red-500">
+                      {errors.description.message}
+                    </p>
                   )}
                 </div>
 
@@ -175,16 +194,28 @@ export default function CaseStudyForm() {
                   render={({ field }) => (
                     <div className="space-y-2">
                       {categories.map((item) => {
-                        const isChecked = field.value?.some((v) => v._id === item._id);
+                        const isChecked = field.value?.some(
+                          (v) => v._id === item._id
+                        );
                         return (
-                          <div key={item._id} className="flex items-center gap-2">
+                          <div
+                            key={item._id}
+                            className="flex items-center gap-2"
+                          >
                             <Checkbox
                               id={item._id}
                               checked={isChecked}
                               onCheckedChange={(checked) =>
                                 checked
-                                  ? field.onChange([...(field.value || []), item])
-                                  : field.onChange(field.value?.filter((v) => v._id !== item._id))
+                                  ? field.onChange([
+                                      ...(field.value || []),
+                                      item,
+                                    ])
+                                  : field.onChange(
+                                      field.value?.filter(
+                                        (v) => v._id !== item._id
+                                      )
+                                    )
                               }
                             />
                             <Label htmlFor={item._id} className="font-normal">
@@ -197,7 +228,9 @@ export default function CaseStudyForm() {
                   )}
                 />
                 {errors.categories && (
-                  <p className="text-sm text-red-500">{errors.categories.message as string}</p>
+                  <p className="text-sm text-red-500">
+                    {errors.categories.message as string}
+                  </p>
                 )}
               </div>
 
@@ -208,7 +241,10 @@ export default function CaseStudyForm() {
                   name="status"
                   control={control}
                   render={({ field }) => (
-                    <Select value={field.value || undefined} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value || undefined}
+                      onValueChange={field.onChange}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select a Status" />
                       </SelectTrigger>
@@ -220,7 +256,9 @@ export default function CaseStudyForm() {
                   )}
                 />
                 {errors.status && (
-                  <p className="text-sm text-red-500">{errors.status.message}</p>
+                  <p className="text-sm text-red-500">
+                    {errors.status.message}
+                  </p>
                 )}
               </div>
 
@@ -231,7 +269,9 @@ export default function CaseStudyForm() {
                   name="featuredImg"
                   control={control}
                   render={({ field }) => {
-                    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                    const handleImageChange = (
+                      e: React.ChangeEvent<HTMLInputElement>
+                    ) => {
                       const file = e.target.files?.[0];
                       if (file) {
                         field.onChange(file);
@@ -242,7 +282,9 @@ export default function CaseStudyForm() {
                     const handleRemove = () => {
                       field.onChange(null);
                       setImagePreview(null);
-                      const input = document.getElementById("featured-image") as HTMLInputElement;
+                      const input = document.getElementById(
+                        "featured-image"
+                      ) as HTMLInputElement;
                       if (input) input.value = "";
                     };
 
@@ -285,7 +327,9 @@ export default function CaseStudyForm() {
                                 variant="outline"
                                 className="w-full h-32 border-dashed border-2 hover:bg-muted/50 bg-transparent"
                                 onClick={() =>
-                                  document.getElementById("featured-image")?.click()
+                                  document
+                                    .getElementById("featured-image")
+                                    ?.click()
                                 }
                               >
                                 <div className="flex flex-col items-center gap-2">

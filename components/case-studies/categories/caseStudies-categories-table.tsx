@@ -26,6 +26,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import CaseStudiesCategoryDeleteConfirmation from "./delete-confirmation";
+import api from "@/hooks/useAxios";
 
 
 //Schema
@@ -113,7 +114,7 @@ export default function CaseStudiesCategoriesTable({
 
   // fetch items
   const getTableItems = useCallback(async () => {
-    const res = await axios.get("http://localhost:5000/api/case-studies/categories");
+    const res = await api.get("/api/case-studies/categories");
     dispatch({ type: "SET_ITEMS", payload: res.data });
   }, []);
 
@@ -138,14 +139,14 @@ export default function CaseStudiesCategoriesTable({
   const onSubmit = async (data: RowItem) => {
     try {
       if (state.selectedItem) {
-        await axios.patch(
-          `http://localhost:5000/api/case-studies/categories/${data._id}`,
+        await api.patch(
+          `/api/case-studies/categories/${data._id}`,
           data
         );
         toast.success("Category updated success");
         dispatch({type: "CANCEL_EDIT"})
       } else {
-        await axios.post("http://localhost:5000/api/case-studies/categories", data);
+        await api.post("/api/case-studies/categories", data);
         toast.success("Category created success");
       }
       getTableItems();
